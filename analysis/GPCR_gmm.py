@@ -11,7 +11,7 @@ import glob
 n_choose = 100
 stride = 1
 lag_time = 1
-
+iteration = 1
 
 PDB =  md.load_pdb('../../GPCR_NatureChemistry/reference-structures/apo_snapshot.pdb')
 filenames = glob.glob('../../dcd_trajectories/apo_b2ar_processed/trj*')
@@ -20,7 +20,7 @@ trajectories = [md.load(filename, top=PDB) for filename in filenames]
 train = trajectories[0::2]
 test = trajectories[1::2]
 
-featurizer = sklearn.externals.joblib.load("featurizer/featurizer0-%d.job" % n_choose)
+featurizer = sklearn.externals.joblib.load("featurizer/featurizer%d-%d.job" % (iteration, n_choose))
 
 n_components = 3
 n_states = 3
@@ -46,7 +46,7 @@ for i, j in [(0, 1)]:
     fig = plt.figure()
     plt.hexbin(q[:,i], q[:, j], bins='log')
     plt.errorbar(cluster.means_[:, i], cluster.means_[:, j], xerr=covars_[:,i] ** 0.5, yerr=covars_[:, j] ** 0.5, fmt='kx', linewidth=4)
-    fig.savefig('Clusters0-%d.pdf' % n_choose)
+    fig.savefig('Clusters%d-%d.pdf' % (iteration,n_choose))
 
 
 states = cluster_pipeline.transform(trajectories)
@@ -55,4 +55,4 @@ samples = mixtape.utils.map_drawn_samples(ind, trajectories)
 
 for i in range(n_states):
     for k, t in enumerate(samples[i]):
-        t.save("pdbs/state%d-%d.pdb" % (i, k))
+        t.save("pdbs/state%d-%d-%d.pdb" % (iteration,i, k))
