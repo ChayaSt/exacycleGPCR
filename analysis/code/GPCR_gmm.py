@@ -11,7 +11,7 @@ import glob
 n_choose = 100
 stride = 1
 lag_time = 1
-iteration = 1
+iteration = 9
 
 PDB =  md.load_pdb('../../GPCR_NatureChemistry/reference-structures/apo_snapshot.pdb')
 filenames = glob.glob('../../dcd_trajectories/apo_b2ar_processed/trj*')
@@ -56,3 +56,8 @@ samples = mixtape.utils.map_drawn_samples(ind, trajectories)
 for i in range(n_states):
     for k, t in enumerate(samples[i]):
         t.save("pdbs/state%d-%d-%d.pdb" % (iteration,i, k))
+
+sklearn.externals.joblib.dump(pipeline, "pipelin.job", compress=True)
+sklearn.externals.joblib.dump(cluster, "cluster.job", compress=True)
+sklearn.externals.joblib.dump(feature_pipeline, "feature_pipeline", compress=True)
+sklearn.externals.joblib.dump(cluster_pipeline, "cluster_pipeline", compress=True)
